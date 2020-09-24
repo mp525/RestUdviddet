@@ -37,6 +37,7 @@ public class PersonFacade implements IPersonFacade {
         return instance;
     }
 
+    
     @Override
     public PersonDTO addPerson(String fName, String lName, String phone) throws MissingInputException{
         EntityManager em = emf.createEntityManager();
@@ -138,4 +139,6 @@ public class PersonFacade implements IPersonFacade {
         }
 
     }
+    
+    //Begin part3
 }
