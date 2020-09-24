@@ -7,6 +7,7 @@ package facades;
 
 import dto.PersonDTO;
 import dto.PersonsDTO;
+import entities.Address;
 import entities.Person;
 import exceptions.MissingInputException;
 import exceptions.PersonNotFoundException;
@@ -39,12 +40,15 @@ public class PersonFacade implements IPersonFacade {
 
     
     @Override
-    public PersonDTO addPerson(String fName, String lName, String phone) throws MissingInputException{
+    public PersonDTO addPerson(String fName, String lName, String phone, String street, int zip, String city) throws MissingInputException{
         EntityManager em = emf.createEntityManager();
         if(fName.length() == 0 || lName.length() == 0){
             throw new MissingInputException("First Name and/or Last Name is missing");
         }
         Person person = new Person(fName, lName, phone);
+        Address address = new Address(street, zip, city);
+        person.setAddress(address);
+        System.out.println(person.getAddress().getStreet() + ", " + person.getAddress().getCity() + ", " + person.getAddress().getZip());
 
         em.getTransaction().begin();
         em.persist(person);
@@ -65,9 +69,11 @@ public class PersonFacade implements IPersonFacade {
             if(tmpPerson == null){
                 throw new PersonNotFoundException("Could not delete, provided id does not exist.");
             }
-            Query query2 = em.createQuery("Delete from Person p where p.id = :id");
-            query2.setParameter("id", id);
-            query2.executeUpdate();
+            //Query query2 = em.createQuery("Delete from Person p where p.id = :id");
+            //query2.setParameter("id", id);
+            em.remove(tmpPerson);
+            em.remove(tmpPerson.getAddress());
+            //query2.executeUpdate();
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -127,12 +133,24 @@ public class PersonFacade implements IPersonFacade {
     public static void main(String[] args) {
         emf = EMF_Creator.createEntityManagerFactory();
         EntityManager em = emf.createEntityManager();
+        
+        Person p1 = new Person("Hansi", "Hinterseer", "21212121");
+        Person p2 = new Person("Günter", "Strudel", "66666666");
+        Person p3 = new Person("Luther", "Kind", "88888888");
+        
+        Address a1 = new Address("Store Torv 1", 2323, "Nr. Snede");
+        Address a2 = new Address("Langgade 34", 1212, "Valby");
+        Address a3 = new Address("Solsortvej 10", 3390, "Hundested");
+        
+        p1.setAddress(a1);
+        p2.setAddress(a2);
+        p3.setAddress(a3);
 
         try {
             em.getTransaction().begin();
-            em.persist(new Person("Hansi", "Hinterseer", "21212121"));
-            em.persist(new Person("Günter", "Strudel", "66666666"));
-            em.persist(new Person("Luther", "Kind", "88888888"));
+            em.persist(p1);
+            em.persist(p2);
+            em.persist(p3);
             em.getTransaction().commit();
         } finally {
             em.close();

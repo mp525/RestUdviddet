@@ -60,7 +60,6 @@ public class PersonFacadeTest {
             em.persist(p1);
             em.persist(p2);
             em.persist(p3);
-
             em.getTransaction().commit();
         } finally {
             em.close();
