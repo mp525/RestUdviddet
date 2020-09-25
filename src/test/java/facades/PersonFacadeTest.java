@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,9 +81,24 @@ public class PersonFacadeTest {
     }
     
     @Test
+    public void testGetPersonNegative(){
+      Exception exception = assertThrows(PersonNotFoundException.class, () ->
+            facade.getPerson(0));
+        assertEquals("No person with provided id found.", exception.getMessage());
+    }
+    
+    
+    @Test
     public void testAddPerson() throws MissingInputException{
         PersonDTO dto = facade.addPerson(p1.getFirstName(), p1.getLastName(), p1.getPhone());
         assertTrue(dto != null);
+    }
+    
+    @Test
+    public void testAddPersonNegative(){
+        Exception exception = assertThrows(MissingInputException.class, () ->
+            facade.addPerson("", "", ""));
+        assertEquals("First Name and/or Last Name is missing", exception.getMessage());
     }
     
     @Test
@@ -107,12 +123,37 @@ public class PersonFacadeTest {
     }
     
     @Test
+    public void testDeletePersonNegative(){
+        Exception exception = assertThrows(PersonNotFoundException.class, () ->
+        facade.deletePerson(0));
+        assertEquals("Could not delete, provided id does not exist.", exception.getMessage());
+    }
+    
+    @Test
     public void testEditPerson() throws PersonNotFoundException, MissingInputException{
         p1.setPhone("1234");
         PersonDTO p1DTO = new PersonDTO(p1);
         PersonDTO dto = facade.editPerson(p1DTO);
         assertEquals(dto.getPhone(),p1.getPhone());
     }
+    
+    @Test
+    public void testEditPersonPNFE(){
+        PersonDTO p = new PersonDTO("test", "test", "22222");
+        p.setId(0);
+        Exception exception = assertThrows(PersonNotFoundException.class, () ->
+            facade.editPerson(p));
+        assertEquals("No person with provided id found.", exception.getMessage());
+    }
+    
+    @Test
+    public void testEditPersonMIE(){
+        PersonDTO p = new PersonDTO("", "test", "22222");
+        Exception exception = assertThrows(MissingInputException.class, () ->
+            facade.editPerson(p));
+        assertEquals("First Name and/or Last Name is missing", exception.getMessage());
+    }
+    
     
     
 
