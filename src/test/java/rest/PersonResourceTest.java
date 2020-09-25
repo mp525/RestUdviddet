@@ -18,6 +18,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -115,30 +116,42 @@ public class PersonResourceTest {
                 .body("lastName", equalTo("bop"))
                 .body("id", notNullValue());
     }
-    
+
     @Test
-    public void testGetPerson(){
+    public void testGetPerson() {
         given()
                 .pathParam("id", p1.getId())
                 .get("/person/{id}")
                 .then()
                 .assertThat()
                 .body("id", equalTo(p1.getId()));
-                
+
     }
-    
-   // @Test
-    public void testDeletePerson(){
+
+    @Test
+    public void testGetPersonError() {
+        String message;
+        message = given()
+                .contentType("application/json")
+                .when()
+                .get("/person/0")
+                .then()
+                .extract().body().jsonPath().getString("message");
+        assertThat(message, is("No person with provided id found."));
+    }
+
+    @Test
+    public void testDeletePerson() {
         //"status of PostmanKarl": "removed"
-        String status;
-        status = given()
+        given()
+                .contentType("application/json")
+                .when()
                 .pathParam("id", p1.getId())
                 .delete("person/{id}")
                 .then()
-                .extract().body().jsonPath().getString("status of HansiHinterseer");
-                
-        assertEquals(status,"removed");       
-                
+                .assertThat()
+                .body("id", equalTo(p1.getId()));
+
     }
 
 }
