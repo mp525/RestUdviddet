@@ -189,12 +189,12 @@ public class PersonFacade implements IPersonFacade {
         PersonDTO dto2 = facade.addPerson(p2.getFirstName(), p2.getLastName(), p2.getPhone(), a1.getStreet(), a1.getZip(), a1.getCity());
         PersonDTO dto3 = facade.addPerson(p3.getFirstName(), p3.getLastName(), p3.getPhone(), a2.getStreet(), a2.getZip(), a2.getCity());
 
-        facade.deletePerson(dto1.getId());
-        facade.deletePerson(dto3.getId());
+       // facade.deletePerson(dto1.getId());
+        //facade.deletePerson(dto3.getId());
         
-        dto2.setStreet("Teststreet");
+        //dto2.setStreet("Teststreet");
         
-        facade.editPerson(dto2);
+        //facade.editPerson(dto2);
 
 //        p1.setAddress(a1);
 //        p2.setAddress(a2);

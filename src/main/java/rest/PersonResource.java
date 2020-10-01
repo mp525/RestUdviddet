@@ -19,10 +19,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 //Todo Remove or change relevant parts before ACTUAL use
 @Path("person")
 public class PersonResource {
+        private UriInfo context;
+
 
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
 
